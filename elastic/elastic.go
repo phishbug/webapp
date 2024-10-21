@@ -24,7 +24,7 @@ import (
 
 // Handler function that takes additional parameters
 func GetPage(w http.ResponseWriter, r *http.Request) {
-    fmt.Println("I am inside get page")
+    fmt.Println(constants.GetTemplatePath())
     // Retrieve URL parameters
     vars := mux.Vars(r) // Get the URL parameters
     isPage := helpers.InArrayStrings(strings.Split(constants.Pages, "|"), vars["page"])
@@ -36,12 +36,12 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    fmt.Println(constants.TemplatePath)
+    fmt.Println(constants.GetTemplatePath())
     //Set Templates
     tmpl := template.Must(template.ParseFiles(
-        constants.TemplatePath + "view/layout.gohtml",
-        constants.TemplatePath + "view/footer.gohtml",
-        constants.TemplatePath + "view/pages/" + strings.ReplaceAll(vars["page"], "-", "_") + ".gohtml",
+        constants.GetTemplatePath() + "view/layout.gohtml",
+        constants.GetTemplatePath() + "view/footer.gohtml",
+        constants.GetTemplatePath() + "view/pages/" + strings.ReplaceAll(vars["page"], "-", "_") + ".gohtml",
     ))
 
     tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons())

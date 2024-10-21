@@ -11,7 +11,7 @@ import (
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusNotFound)
 
-    tmpl := template.Must(template.ParseFiles(constants.TemplatePath + "pages/notfound.gohtml"))
+    tmpl := template.Must(template.ParseFiles(constants.GetTemplatePath() + "pages/notfound.gohtml"))
 
     // fmt.Println(path);
     tmpl.ExecuteTemplate(w, "notfound.gohtml", nil)
@@ -21,7 +21,7 @@ func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 func PageNotFound(w http.ResponseWriter) {
 	 w.WriteHeader(http.StatusNotFound)
 
-    tmpl := template.Must(template.ParseFiles(constants.TemplatePath + "pages/notfound.gohtml"))
+    tmpl := template.Must(template.ParseFiles(constants.GetTemplatePath() + "pages/notfound.gohtml"))
 
     // fmt.Println(path);
     tmpl.ExecuteTemplate(w, "notfound.gohtml", nil)
