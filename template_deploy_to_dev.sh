@@ -11,6 +11,10 @@ if [ $# -lt 1 ]; then
     echo "No Parms provided if want to run from params eg: ./template_deploy_to_dev.sh --file=view"
     echo "Prociding with all template, pages, static files"
 
+    echo "Finding Changes"
+
+    git status
+    
     echo "Adding Git Chages"
     git add .
 
