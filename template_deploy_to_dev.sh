@@ -1,51 +1,78 @@
 #!/bin/bash
 
-echo "Checking if parameters are provided"
+# Configuration
+REMOTE_USER="ec2-user"  # Change this to your remote username
+REMOTE_HOST="ec2-52-53-78-232.us-west-1.compute.amazonaws.com"  # Change this to your remote host (IP or domain)
+REMOTE_DIR="/home/ec2-user"  # Change this to the desired remote directory
+SSH_KEY="/home/kunal/pems/phisbug.pem"
 
-# Get the first parameter
-PARAM=$1
+# Check if we are in a git repository
+if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo "Not a git repository."
+    exit 1
+fi
+
+# Get the output of git status
+git_status_output=$(git status)
+
+echo "Deploying To git"
 
 CURRENT_DATETIME=$(date +"%Y-%m-%d %H:%M:%S")
 
-if [ $# -lt 1 ]; then
-    echo "No Parms provided if want to run from params eg: ./template_deploy_to_dev.sh --file=view"
-    echo "Prociding with all template, pages, static files"
+echo "Adding Git Chages"
+git add .
 
-    echo "Finding Changes"
+echo "Git Commit"
+git commit -m "Deploying changes for Go On  $CURRENT_DATETIME"
 
-    git status
-
-    echo "Adding Git Chages"
-    git add .
-
-    echo "Git Commit"
-    git commit -m "Deploying changes for Go Templates On  $CURRENT_DATETIME"
-
-    echo "Git Push"
-    git push origin  main
+echo "Git Push"
+git push origin  main
 
 
-    scp -r  -i "/home/kunal/pems/phisbug.pem" view  ec2-user@ec2-52-53-78-232.us-west-1.compute.amazonaws.com:~/
-    scp -r  -i "/home/kunal/pems/phisbug.pem" pages  ec2-user@ec2-52-53-78-232.us-west-1.compute.amazonaws.com:~/
-    scp -r  -i "/home/kunal/pems/phisbug.pem" static  ec2-user@ec2-52-53-78-232.us-west-1.compute.amazonaws.com:~/
-elif [ "$PARAM" == "view" ] || [ "$PARAM" == "pages" ] || [ "$PARAM" == "static" ]; then
+# Folders to check
+folders=("view" "static" "pages")
 
-    echo "Finding Changes"
-    git status
+# Function to copy files to the remote server
+copy_files() {
+    local files=("$@")
+    for file in "${files[@]}"; do
+        echo "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/$file"
+        scp -i "$SSH_KEY" "$file" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/$file"
+    done
+}
 
-    echo "Adding Git Chages"
-    git add .
+# Arrays to hold files
+files_to_copy=()
 
-    echo "Git Commit"
-    git commit -m "Deploying changes for $PARAM Go Templates On  $CURRENT_DATETIME"
+# Check for modified, untracked, and deleted files
+for folder in "${folders[@]}"; do
+    # Modified files
+    while IFS= read -r line; do
+        if [[ "$line" == *"$folder/"* ]]; then
+            files_to_copy+=("$line")
+        fi
+    done < <(echo "$git_status_output" | grep 'modified:' | awk '{print $2}')
 
-    echo "Git Push"
-    git push origin  main
+    # Untracked files
+    while IFS= read -r line; do
+        if [[ "$line" == *"$folder/"* ]]; then
+            files_to_copy+=("$line")
+        fi
+    done < <(echo "$git_status_output" | grep 'Untracked files:' -A 100 | grep -v 'use' | grep -v 'Untracked files:' | sed 's/^ *//')
 
-    echo "Param Found: $PARAM"
+    # Deleted files
+    while IFS= read -r line; do
+        if [[ "$line" == *"$folder/"* ]]; then
+            files_to_copy+=("$line")
+        fi
+    done < <(echo "$git_status_output" | grep 'deleted:' | awk '{print $2}')
+done
 
-    scp -r  -i "/home/kunal/pems/phisbug.pem" $PARAM  ec2-user@ec2-52-53-78-232.us-west-1.compute.amazonaws.com:~/
+# Copy files to remote server
+if [ ${#files_to_copy[@]} -gt 0 ]; then
+    echo "Copying files to remote server..."
+    copy_files "${files_to_copy[@]}"
+    echo "Files copied successfully."
 else
-    echo "Invalid Command Check doc for deployment"
-    exit 1
+    echo "No files to copy."
 fi
