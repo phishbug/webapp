@@ -14,7 +14,7 @@ const (
 //Get Template Path
 func GetTemplatePath() string{
 
-	err := godotenv.Load()
+	err := godotenv.Load("/home/ec2-user/.env")
 	
 	if err != nil {
 		return ""
