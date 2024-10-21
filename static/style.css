@@ -14,9 +14,12 @@ body {
     font-style: normal;
 }
 .h1,
-.h4 {
+.h4
+.h3
+.h2
+.h6 {
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 900;
   letter-spacing: 0.6px;
 }
 .cat-nav,
