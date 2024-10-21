@@ -42,6 +42,7 @@ type Site struct {
     Categories []Category
     Authors  []Author
     Pages []Page
+    IsContact bool
 }
 
 type ContactForm struct {

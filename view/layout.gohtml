@@ -50,12 +50,15 @@
 </div>
 {{ block "footer" .}}{{end}}
 <!-- Footer -->
- <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+ 
+ {{ if .IsContact }}
+     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-  <script type="text/javascript">
-  var onloadCallback = function() {
-    alert("grecaptcha is ready!");
-  };
+      <script type="text/javascript">
+      var onloadCallback = function() {
+        alert("grecaptcha is ready!");
+      };
+  {{ end }}
 </script>
 
  </script>
