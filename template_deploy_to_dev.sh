@@ -14,7 +14,7 @@ if [ $# -lt 1 ]; then
     echo "Finding Changes"
 
     git status
-    
+
     echo "Adding Git Chages"
     git add .
 
@@ -29,6 +29,9 @@ if [ $# -lt 1 ]; then
     scp -r  -i "/home/kunal/pems/phisbug.pem" pages  ec2-user@ec2-52-53-78-232.us-west-1.compute.amazonaws.com:~/
     scp -r  -i "/home/kunal/pems/phisbug.pem" static  ec2-user@ec2-52-53-78-232.us-west-1.compute.amazonaws.com:~/
 elif [ "$PARAM" == "view" ] || [ "$PARAM" == "pages" ] || [ "$PARAM" == "static" ]; then
+
+    echo "Finding Changes"
+    git status
 
     echo "Adding Git Chages"
     git add .
