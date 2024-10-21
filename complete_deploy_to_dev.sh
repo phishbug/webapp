@@ -7,17 +7,17 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "$GREEN Building Go Build"
+echo -e "$GREEN Building Go Build $NC"
 
 go build
 
-echo "Zip build"
+echo -e "Zip build $NC"
 
 tar -cvzf webapp.tar.gz webapp
 
-echo "Zip Complete"
+echo -e "$YELLOW Zip Complete $NC"
 
-echo "Copy From Local to Remote"
+echo -e "$RED Copy From Local to Remote $NC"
 
 echo "Deploying To git"
 
