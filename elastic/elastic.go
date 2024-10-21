@@ -37,6 +37,8 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
     }
 
     fmt.Println(constants.GetTemplatePath())
+    fmt.Println(vars["page"])
+    fmt.Println(constants.GetTemplatePath() + "view/pages/" + strings.ReplaceAll(vars["page"], "-", "_") + ".gohtml")
     //Set Templates
     tmpl := template.Must(template.ParseFiles(
         constants.GetTemplatePath() + "view/layout.gohtml",
