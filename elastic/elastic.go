@@ -2,7 +2,7 @@ package elastic
 
 import (
     // "context"
-    // "fmt"
+    "fmt"
     // "webapp/seo"
     "webapp/helpers"
     "webapp/constants"
@@ -24,15 +24,19 @@ import (
 
 // Handler function that takes additional parameters
 func GetPage(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("I am inside get page")
     // Retrieve URL parameters
     vars := mux.Vars(r) // Get the URL parameters
     isPage := helpers.InArrayStrings(strings.Split(constants.Pages, "|"), vars["page"])
 
+    fmt.Println(isPage)
     // Here, you can check for specific conditions to send a 404
     if !isPage {
-        helpers.PageNotFound(constants.TemplatePath, w)
+        helpers.PageNotFound(w)
         return
     }
+
+    fmt.Println(constants.TemplatePath)
     //Set Templates
     tmpl := template.Must(template.ParseFiles(
         constants.TemplatePath + "view/layout.gohtml",

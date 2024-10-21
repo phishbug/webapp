@@ -43,3 +43,9 @@ type Site struct {
     Authors  []Author
     Pages []Page
 }
+
+type ContactForm struct {
+    Name    string
+    Email   string
+    Message string
+}

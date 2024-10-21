@@ -18,7 +18,11 @@ func main() {
     //Initiate Router
     r := mux.NewRouter()
 
+    //Pages
     r.HandleFunc("/page/{page}", elastic.GetPage).Methods("GET")
+
+    //Contact us Form
+    r.HandleFunc("/contact-us}", elastic.GetPage).Methods("POST")
 
     // // Serve the robots.txt file
     // http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {

@@ -389,3 +389,67 @@ h4 {
     margin-top: -10px;
 }
 a {color: #000}
+
+/*Material  CSS for input*/
+
+.form-container {
+    max-width: 400px;
+    margin: auto;
+}
+
+.input-container {
+    position: relative;
+    margin: 20px 0;
+}
+
+.material-input, .material-textarea {
+    width: 89%;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
+    font-size: 16px;
+    outline: none;
+    color: #333;
+    padding-left: 72px;
+}
+
+.material-input:focus, .material-textarea:focus {
+    border-bottom: 2px solid #6200ea; /* Primary color */
+}
+
+.input-label, .textarea-label {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    font-size: 16px;
+    transition: 0.2s ease all;
+}
+
+.material-input:focus + .input-label,
+.material-input:not(:placeholder-shown) + .input-label,
+.material-textarea:focus + .textarea-label,
+.material-textarea:not(:placeholder-shown) + .textarea-label {
+    top: -10px;
+    font-size: 12px;
+}
+
+.material-textarea {
+    min-height: 100px; /* Adjust as needed */
+}
+
+.material-button {
+    background-color: #000; /* Primary color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 47%;
+}
+
+.material-button:hover {
+    background-color: #3700b3; /* Darker shade for hover effect */
+}
