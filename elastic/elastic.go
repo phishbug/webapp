@@ -56,7 +56,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
     tmpl := template.Must(template.ParseFiles(
         constants.GetTemplatePath() + "view/layout.gohtml",
         constants.GetTemplatePath() + "view/footer.gohtml",
-        constants.GetTemplatePath() + "view/main.gohtml",
+        constants.GetTemplatePath() + "view/post.gohtml",
     ))
 
     tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("", documents, false))
