@@ -51,7 +51,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 func GetPost(w http.ResponseWriter, r *http.Request) {
     // Retrieve URL parameters
     vars := mux.Vars(r) // Get the URL parameters
-
+    
     //Get Docs
     documents := opensearch.GetPostQuery(vars["post"])
 

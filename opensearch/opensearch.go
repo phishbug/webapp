@@ -42,6 +42,8 @@ func GetHomeSearchQuery() []types.Document{
 }
 
 func GetPostQuery(slug string) []types.Document{
+fmt.Print("Print Slug");
+    fmt.Print(slug);
     //Get Search Request Here
     searchResp := getSearchRequest(getSearchQueryForPostPage, slug)
 
@@ -95,27 +97,23 @@ func getSearchQueryForMainPage(slug string) *strings.Reader{
 
 //Generate Query For main page
 func getSearchQueryForPostPage(slug string) *strings.Reader{
-    // Create the OpenSearch query
+    // Create the wildcard query
+    // Create the query
     query := map[string]interface{}{
         "query": map[string]interface{}{
-            "bool": map[string]interface{}{
-                "must": []interface{}{
-                    map[string]interface{}{
-                        "term": map[string]interface{}{
-                            "slug": slug, // Use the variable
-                        },
-                    },
-                },
+            "term": map[string]interface{}{
+                "type": "post",  // Change to your slug value
             },
         },
-    }
-    queryJSON, err := json.Marshal(query)
-    if err != nil {
-        fmt.Println("Error marshaling JSON:", err)
-        panic(err)
+        "_source": []string{"title", "content", "createdat", "slug"},
     }
 
-    return strings.NewReader(string(queryJSON))
+    // Convert the query to JSON
+    queryJSON, err := json.Marshal(query)
+    if err != nil {
+        log.Fatalf("Error marshaling JSON: %s", err)
+    }
+    return strings.NewReader(string(queryJSON))    
 }
 
 //Get Results from the doc
@@ -130,12 +128,16 @@ func getOpenSourceDoc(searchResp *opensearchapi.Response) []types.Document{
     // Extract the hits
     hits := response["hits"].(map[string]interface{})["hits"].([]interface{})
 
+    fmt.Print(response["hits"])
+
     var documents []types.Document
      // Loop through the hits and extract the data
     for _, hit := range hits {
         if hitMap, ok := hit.(map[string]interface{}); ok {
             // Extract the "_id" field
             id := hitMap["_id"].(string)
+
+            fmt.Println(id);
 
             // Extract other fields from the "_source" if available
             source  := hitMap["_source"].(map[string]interface{})
