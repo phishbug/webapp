@@ -2,11 +2,9 @@ package main
 
 import (
     "net/http"
-    // "webapp/controller"
     "webapp/elastic"
-    // "webapp/constants"
     "webapp/helpers"
-    // "webapp/auth"
+    "webapp/user"
 
     "github.com/gorilla/mux"
 
@@ -22,11 +20,14 @@ func main() {
     r.HandleFunc("/", elastic.Home).Methods("GET")
 
     //Pages
-    r.HandleFunc("/page/{page}", elastic.GetPage).Methods("GET")
-
+    r.HandleFunc("/page/{page}",   elastic.GetPage).Methods("GET")
 
     //Contact us Form
-    r.HandleFunc("/contact-us}", elastic.GetPage).Methods("POST")
+    r.HandleFunc("/contact-us",   elastic.GetPage).Methods("POST")
+
+    //Login Page
+    r.HandleFunc("/signup-login", user.LoginPage).Methods("GET")
+
 
     // // Serve the robots.txt file
     // http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {

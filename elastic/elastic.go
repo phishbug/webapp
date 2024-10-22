@@ -29,7 +29,7 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
         constants.GetTemplatePath() + "view/pages/" + strings.ReplaceAll(vars["page"], "-", "_") + ".gohtml",
     ))
 
-    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons(vars["page"], []types.Document{}))
+    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons(vars["page"], []types.Document{}, true))
 }
 
 // Home functions
@@ -44,7 +44,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
         constants.GetTemplatePath() + "view/main.gohtml",
     ))
 
-    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("", documents))
+    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("", documents, false))
 }
 
 
