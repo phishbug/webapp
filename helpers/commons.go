@@ -26,7 +26,11 @@ func MergeWithCommons(page string, documents []types.Document, captcha bool) typ
         return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks(), IsContact: true}
     }
 
-	return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks(), Data: documents, IsContact: captcha}
+    if page == "page" {
+        return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks(), Post: documents[0], IsContact: captcha}    
+    }
+	
+    return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks(), Data: documents, IsContact: captcha}
 }
 
 //Make pages like privacy, contact, etc

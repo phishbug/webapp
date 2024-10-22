@@ -45,6 +45,7 @@ type Site struct {
     ImageBaseUrl string
     Categories []Category
     Authors  []Author
+    Post Document
     Pages []Page
     IsContact bool
 }

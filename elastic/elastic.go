@@ -62,7 +62,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
         constants.GetTemplatePath() + "view/post.gohtml",
     ))
 
-    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("", documents, false))
+    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons(vars["post"], documents, false))
 }
 
 // func ElasticSearchPing(w http.ResponseWriter, r *http.Request, opensearchURL string, index string){
