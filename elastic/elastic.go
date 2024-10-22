@@ -48,6 +48,20 @@ func Home(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func GetPost(w http.ResponseWriter, r *http.Request) {
+        //Get Docs
+    documents := opensearch.GetHomeSearchQuery()
+
+    //Set Templates
+    tmpl := template.Must(template.ParseFiles(
+        constants.GetTemplatePath() + "view/layout.gohtml",
+        constants.GetTemplatePath() + "view/footer.gohtml",
+        constants.GetTemplatePath() + "view/main.gohtml",
+    ))
+
+    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("", documents, false))
+}
+
 // func ElasticSearchPing(w http.ResponseWriter, r *http.Request, opensearchURL string, index string){
 //      fmt.Println("Start");
 

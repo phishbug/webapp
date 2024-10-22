@@ -28,6 +28,8 @@ func main() {
     //Login Page
     r.HandleFunc("/signup-login", user.LoginPage).Methods("GET")
 
+    //Pages
+    r.HandleFunc("/{post}",   elastic.GetPost).Methods("GET")
 
     // // Serve the robots.txt file
     // http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
