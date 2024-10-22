@@ -49,8 +49,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 
 func GetPost(w http.ResponseWriter, r *http.Request) {
-        //Get Docs
-    documents := opensearch.GetHomeSearchQuery()
+    // Retrieve URL parameters
+    vars := mux.Vars(r) // Get the URL parameters
+
+    //Get Docs
+    documents := opensearch.GetPostQuery(vars["post"])
 
     //Set Templates
     tmpl := template.Must(template.ParseFiles(

@@ -55,4 +55,4 @@ type ContactForm struct {
     Message string
 }
 
-type Operation func() *strings.Reader
+type Operation func(string) *strings.Reader

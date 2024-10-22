@@ -36,19 +36,26 @@ func getOpenSearchClient() (*opensearch.Client, error) {
 func GetHomeSearchQuery() []types.Document{
     
     //Get Search Request Here
-    searchResp := getSearchRequest(getSearchQueryForMainPage)
+    searchResp := getSearchRequest(getSearchQueryForMainPage, "")
 
     return getOpenSourceDoc(searchResp)
 }
 
-func getSearchRequest(op types.Operation) *opensearchapi.Response{
+func GetPostQuery(slug string) []types.Document{
+    //Get Search Request Here
+    searchResp := getSearchRequest(getSearchQueryForPostPage, slug)
+
+    return getOpenSourceDoc(searchResp)
+}
+
+func getSearchRequest(op types.Operation, slug string) *opensearchapi.Response{
 
     client, err := getOpenSearchClient()
 
     // Example: Search for documents
     searchReq := opensearchapi.SearchRequest{
         Index:  []string{constants.GetENVKey("OPEN_SEARCH_INDEX")},
-        Body:  op(),
+        Body:  op(slug),
     }
 
     searchRes, err := searchReq.Do(context.Background(), client)
@@ -67,7 +74,7 @@ func getSearchRequest(op types.Operation) *opensearchapi.Response{
 }
 
 //Generate Query For main page
-func getSearchQueryForMainPage() *strings.Reader{
+func getSearchQueryForMainPage(slug string) *strings.Reader{
     return strings.NewReader(
             `{
                  "size": 50,
@@ -84,6 +91,18 @@ func getSearchQueryForMainPage() *strings.Reader{
                  "_source": ["title", "content", "createdat", "slug"]
              }`,
         )
+}
+
+//Generate Query For main page
+func getSearchQueryForPostPage(slug string) *strings.Reader{
+    return strings.NewReader(
+        `{
+             "query": {
+                 "slug": slug
+             }
+             "_source": ["title", "content", "createdat", "slug"]
+         }`,
+    )
 }
 
 //Get Results from the doc
