@@ -18,9 +18,12 @@ func main() {
     //Initiate Router
     r := mux.NewRouter()
 
+    //Home 
+    r.HandleFunc("/", elastic.Home).Methods("GET")
+
     //Pages
     r.HandleFunc("/page/{page}", elastic.GetPage).Methods("GET")
-    r.HandleFunc("/", elastic.GetPage).Methods("GET")
+
 
     //Contact us Form
     r.HandleFunc("/contact-us}", elastic.GetPage).Methods("POST")

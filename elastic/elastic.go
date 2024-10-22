@@ -1,44 +1,27 @@
 package elastic
 
 import (
-    // "context"
-    "fmt"
-    // "webapp/seo"
     "webapp/helpers"
     "webapp/constants"
-    // "crypto/tls"
+    "webapp/opensearch"
+    "webapp/types"
     "net/http"
     "html/template"
-    // "path/filepath"
-    // "errors"
-    // "encoding/json"
-    // "strings"
-    // "time"
     "strings"
-
-    // "github.com/opensearch-project/opensearch-go/v4"
-    // "github.com/opensearch-project/opensearch-go/v4/opensearchapi"
     "github.com/gorilla/mux"
-    // "github.com/opensearch-project/opensearch-go/v4/opensearchutil"
 )
 
 // Handler function that takes additional parameters
 func GetPage(w http.ResponseWriter, r *http.Request) {
-    fmt.Println(constants.GetTemplatePath())
     // Retrieve URL parameters
     vars := mux.Vars(r) // Get the URL parameters
     isPage := helpers.InArrayStrings(strings.Split(constants.Pages, "|"), vars["page"])
 
-    fmt.Println(isPage)
     // Here, you can check for specific conditions to send a 404
     if !isPage {
         helpers.PageNotFound(w)
         return
     }
-
-    fmt.Println(constants.GetTemplatePath())
-    fmt.Println(vars["page"])
-    fmt.Println(constants.GetTemplatePath() + "view/pages/" + strings.ReplaceAll(vars["page"], "-", "_") + ".gohtml")
     //Set Templates
     tmpl := template.Must(template.ParseFiles(
         constants.GetTemplatePath() + "view/layout.gohtml",
@@ -46,7 +29,22 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
         constants.GetTemplatePath() + "view/pages/" + strings.ReplaceAll(vars["page"], "-", "_") + ".gohtml",
     ))
 
-    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons(vars["page"]))
+    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons(vars["page"], []types.Document{}))
+}
+
+// Home functions
+func Home(w http.ResponseWriter, r *http.Request) {
+    //Get Docs
+    documents := opensearch.GetHomeSearchQuery()
+
+    //Set Templates
+    tmpl := template.Must(template.ParseFiles(
+        constants.GetTemplatePath() + "view/layout.gohtml",
+        constants.GetTemplatePath() + "view/footer.gohtml",
+        constants.GetTemplatePath() + "view/main.gohtml",
+    ))
+
+    tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("", documents))
 }
 
 

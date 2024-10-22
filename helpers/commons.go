@@ -20,13 +20,13 @@ var categories = []types.Category{
 }
 
 //Common variables
-func MergeWithCommons(page string) types.Site {
+func MergeWithCommons(page string, documents []types.Document) types.Site {
     
     if page == "contact-us" {
         return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks(), IsContact: true}
     }
 
-	return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks()}
+	return types.Site{Title: "Phish Bug", Categories: categories, Pages: makePagesLinks(), Data: documents}
 }
 
 //Make pages like privacy, contact, etc
