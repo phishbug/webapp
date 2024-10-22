@@ -69,7 +69,13 @@ ssh -i "$PRIVATE_KEY_PATH" "$INSTANCE_USER@$INSTANCE_IP" << 'EOF'
 
     echo "Untar Finish"
 
-    sudo systemctl restart myapp
+    sudo su
+
+    echo "Going Sudo User"
+
+    systemctl stop myapp
+    
+    systemctl start myapp
 
     echo "App restart Complete"
     
