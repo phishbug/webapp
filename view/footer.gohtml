@@ -36,13 +36,18 @@
         </div>
     </div>
     <hr/>
+    <br/>
+
     <div class="text-center p-3 bg-dark text-white">
           {{ range .Pages}}
             <span class="bottomLinks"> <a title="{{ .Title }}" href="/page/{{ .HREF}}">{{ .Title}} </a>  </span>
           {{end}}
         <div class="text-center">
+            <br/>
             <span class="text-right">&copy; 2024 Phish Blog. All rights reserved.</span>
         </div>
+            <br/>
+        
     </div>
 </footer>
 {{end}}
