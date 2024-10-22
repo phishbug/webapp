@@ -95,14 +95,27 @@ func getSearchQueryForMainPage(slug string) *strings.Reader{
 
 //Generate Query For main page
 func getSearchQueryForPostPage(slug string) *strings.Reader{
-    return strings.NewReader(
-        `{
-             "query": {
-                 "slug": slug
-             }
-             "_source": ["title", "content", "createdat", "slug"]
-         }`,
-    )
+    // Create the OpenSearch query
+    query := map[string]interface{}{
+        "query": map[string]interface{}{
+            "bool": map[string]interface{}{
+                "must": []interface{}{
+                    map[string]interface{}{
+                        "term": map[string]interface{}{
+                            "slug": slug, // Use the variable
+                        },
+                    },
+                },
+            },
+        },
+    }
+    queryJSON, err := json.Marshal(query)
+    if err != nil {
+        fmt.Println("Error marshaling JSON:", err)
+        panic(err)
+    }
+
+    return strings.NewReader(string(queryJSON))
 }
 
 //Get Results from the doc
