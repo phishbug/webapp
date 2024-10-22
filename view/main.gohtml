@@ -1,29 +1,29 @@
  <!-- templates/content.tmpl -->
 {{ define "content" }}
-{{ range .Data[0] }}
+
     <div class="col-12 col-md-6 mt-5">
       <div class="post-card">
           <p class="cat-card-text">Engineering</p>
            <h2 class="card-title">
-              <a href="/{{ .Slug }}" title="{{ .Title }}" class="tittle-a">{{ .Title }}</a>
+              <a href="/{{ .Data[0].Slug }}" title="{{ .Data[0].Title }}" class="tittle-a">{{ .Data[0].Title }}</a>
           </h2>
 
             <main>
 
-              <p class="content"> {{ .Content }} </p>
+              <p class="content"> {{ .Data[0].Content }} </p>
                 
                   <div class="text-left">
                         
                         <div>
                         
                             <img 
-                                src="https://phishbug-images.s3.us-west-1.amazonaws.com/{{ .Author.Path }}"
-                                alt="{{ .Author.Label }} Profile"
+                                src="https://phishbug-images.s3.us-west-1.amazonaws.com/{{ .Data[0].Author.Path }}"
+                                alt="{{ .Data[0].Author.Label }} Profile"
                                 class="author-image author"
                             >
                             <p class="mtn10">
-                                <span class="author">{{ .Author.Label }}</span>
-                                <span class="float-right author"> {{ .TimeDate }}</span>
+                                <span class="author">{{ .Data[0].Author.Label }}</span>
+                                <span class="float-right author"> {{ .Data[0].TimeDate }}</span>
                             </p>
                         
                             
@@ -36,5 +36,4 @@
             </main>
         </div>
     </div>
-{{ end }}
 {{ end }}
