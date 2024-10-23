@@ -57,3 +57,22 @@ type ContactForm struct {
 }
 
 type Operation func(string) *strings.Reader
+
+// ErrorResponse struct for sending error messages
+type ErrorResponse struct {
+    Error string `json:"error"`
+}
+
+// Response struct for JSON responses
+type Response struct {
+    Status  string      `json:"status"`
+    Message string      `json:"message"`
+    Data    interface{} `json:"data,omitempty"` // Optional field for additional data
+}
+
+// Struct for JSON data in POST requests
+type LoginData struct {
+    Username  string `json:"username"`
+    Password string `json:"password"`
+}
+

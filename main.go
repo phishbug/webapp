@@ -5,12 +5,27 @@ import (
     "webapp/elastic"
     "webapp/helpers"
     "webapp/user"
+    "webapp/auth"
 
     "github.com/gorilla/mux"
 
 )
 
 
+func enableCORS(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins, modify as needed
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        
+        // Handle preflight requests
+        if r.Method == http.MethodOptions {
+            return
+        }
+        
+        next.ServeHTTP(w, r)
+    })
+}
 
 func main() {
     //Initiate Router
@@ -30,6 +45,13 @@ func main() {
 
     //Pages
     r.HandleFunc("/{post}",   elastic.GetPost).Methods("GET")
+
+////////////////////////////////////////////////////////////////////////////////////////////Admin Routes///////////////////////////////////////
+    //AdminPages
+    r.HandleFunc("/api-phish-bug/login",  auth.LoginHandler).Methods("POST")
+
+    r.HandleFunc("/api-phish-bug/indexes",  elastic.GetIndexes).Methods("GET")
+
 
     // // Serve the robots.txt file
     // http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +110,7 @@ func main() {
     r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.HandlerFunc(staticFileHandler)))
     
     // Start the server
-    http.Handle("/", r)
+    http.Handle("/",  enableCORS(r))
 
     http.ListenAndServe("0.0.0.0:80", nil)
 }

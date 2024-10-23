@@ -4,7 +4,6 @@ import (
     "context"
     "log"
     "strings"
-    // "time"
     "fmt"
     "encoding/json"
     "webapp/constants"
@@ -32,6 +31,41 @@ func getOpenSearchClient() (*opensearch.Client, error) {
     return client, err
 }
 
+func GetIndexed()  []map[string]interface{}{
+    client, err := getOpenSearchClient()
+
+    if err != nil {
+        log.Fatalf("Error creating the client: %s", err)
+    }
+
+    // Prepare the request to get all indices
+    req := opensearchapi.CatIndicesRequest{
+        Format: "json",
+    }
+
+    // Execute the request
+    res, err := req.Do(context.Background(), client)
+
+    if err != nil {
+        log.Fatalf("Error getting indices: %s", err)
+    }
+    defer res.Body.Close()
+
+    // Check for a successful response
+    if res.IsError() {
+        log.Fatalf("Error: %s", res.String())
+    }
+
+    // Parse the response body
+    var indices []map[string]interface{}
+    if err := json.NewDecoder(res.Body).Decode(&indices); err != nil {
+        // http.Error(w, "Error parsing the response body: "+err.Error(), http.StatusInternalServerError)
+        panic(err)
+    }
+
+   return indices
+}
+
 //Get Query For OPen Search
 func GetHomeSearchQuery() []types.Document{
     
@@ -42,8 +76,6 @@ func GetHomeSearchQuery() []types.Document{
 }
 
 func GetPostQuery(slug string) []types.Document{
-fmt.Print("Print Slug");
-    fmt.Print(slug);
     //Get Search Request Here
     searchResp := getSearchRequest(getSearchQueryForPostPage, slug)
 
@@ -97,23 +129,26 @@ func getSearchQueryForMainPage(slug string) *strings.Reader{
 
 //Generate Query For main page
 func getSearchQueryForPostPage(slug string) *strings.Reader{
-    // Create the wildcard query
-    // Create the query
-    query := map[string]interface{}{
-        "query": map[string]interface{}{
-            "term": map[string]interface{}{
-                "type": "post",  // Change to your slug value
-            },
+    
+    // Create the query with the slug variable
+    query := fmt.Sprintf(`{
+        "query": {
+            "term": {
+                "slug": "%s"
+            }
         },
-        "_source": []string{"title", "content", "createdat", "slug"},
-    }
+        "sort": [
+            {
+                "_id": {
+                    "order": "desc"
+                }
+            }
+        ]
+    }`, "caught-")
 
-    // Convert the query to JSON
-    queryJSON, err := json.Marshal(query)
-    if err != nil {
-        log.Fatalf("Error marshaling JSON: %s", err)
-    }
-    return strings.NewReader(string(queryJSON))    
+    // result := strings.Replace(original, "SLUGREPLACE", slug, -1)
+
+    return strings.NewReader(query)
 }
 
 //Get Results from the doc
@@ -128,7 +163,6 @@ func getOpenSourceDoc(searchResp *opensearchapi.Response) []types.Document{
     // Extract the hits
     hits := response["hits"].(map[string]interface{})["hits"].([]interface{})
 
-    fmt.Print(response["hits"])
 
     var documents []types.Document
      // Loop through the hits and extract the data
@@ -137,7 +171,7 @@ func getOpenSourceDoc(searchResp *opensearchapi.Response) []types.Document{
             // Extract the "_id" field
             id := hitMap["_id"].(string)
 
-            fmt.Println(id);
+          
 
             // Extract other fields from the "_source" if available
             source  := hitMap["_source"].(map[string]interface{})

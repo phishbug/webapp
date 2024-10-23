@@ -2,9 +2,7 @@
 	<div class="container">
 		<div class="row" style="justify-content: center">
 			<div class="col-md-6">
-				{{ range .Data }}
-				<h1>Here will be Post {{ .ID }}</h1>
-				{{ end }}
+				<h1>{{ .Post.Title }}</h1>
 			</div>
 		</div>
 	</div>

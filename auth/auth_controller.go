@@ -2,7 +2,10 @@ package auth
 
 import (
     "fmt"
+    "encoding/json"
     "net/http"
+    "webapp/types"
+    "webapp/helpers"
     "time"
 
     "github.com/dgrijalva/jwt-go"
@@ -62,22 +65,30 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
     }
 }
 
+
 // Handler to demonstrate generating a token
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-    username := r.URL.Query().Get("username")
+    var data types.LoginData
+
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+        http.Error(w, "Invalid request payload", http.StatusBadRequest)
+        return
+    }
     
-    if username != "kunalthool23031986" {
-    	 http.Error(w, "Invalid Auth User", http.StatusInternalServerError)
+    if data.Username != "kunalthool23031986@phishbug.com"  && data.Password != "kunalthool23031986@phishbug.com"{
+        // Write the JSON response
+        helpers.SendErrorResponse(w, http.StatusInternalServerError,  "Invalid Auth User")
+        return
     }
 
-    token, err := GenerateJWT(username)
+    token, err := GenerateJWT(data.Username)
     if err != nil {
         http.Error(w, "Could not generate token", http.StatusInternalServerError)
         return
     }
 
-    w.Write([]byte(fmt.Sprintf("Token: %s", token)))
+    helpers.SendOkResponse(w, "Request successful", map[string]string{"token": token, "admin_name": "Kunal"})
 }
 
 // Protected handler that requires JWT authentication

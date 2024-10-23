@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.sidebar {
+  background-color: #fafafa;
+}
+
+.app {
+  display: flex;
+}
+
+.content {
+  padding: 20px;
+  flex: 1;
+}
