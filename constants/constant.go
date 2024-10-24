@@ -14,6 +14,8 @@ const (
 	DATE_FORMAT = "January 2, 2006"
 )
 
+var envPath = "/home/kunal/projects/go/webapp/.local.env";
+
 func GetAuthor() types.Author{
 	return types.Author{Link: "Kunal"}
 }
@@ -21,7 +23,8 @@ func GetAuthor() types.Author{
 //Get Template Path
 func GetTemplatePath() string{
 
-	err := godotenv.Load("/home/ec2-user/.env")
+	// err := godotenv.Load("/home/ec2-user/.env")
+	err := godotenv.Load(envPath)
 	
 	if err != nil {
 		return ""
@@ -34,7 +37,7 @@ func GetTemplatePath() string{
 //Get Template Path
 func GetOpenSearchAddress() []string{
 
-	err := godotenv.Load("/home/ec2-user/.env")
+	err := godotenv.Load(envPath)
 	
 	if err != nil {
 		return []string{}
@@ -48,7 +51,7 @@ func GetOpenSearchAddress() []string{
 //Get Template Path
 func GetENVKey(key string) string{
 
-	err := godotenv.Load("/home/ec2-user/.env")
+	err := godotenv.Load(envPath)
 	
 	if err != nil {
 		return ""

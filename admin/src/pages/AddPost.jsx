@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactQuill from 'react-quill';
+import axiosInstance from '../axiosInstance';
 import 'react-quill/dist/quill.snow.css';
 import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Alert, Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const AddPost = () => {
-  const { id: postId } = useParams(); // Get postId from URL params
+  const { id: indeId } = useParams(); // Get postId from URL params
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
@@ -17,8 +18,8 @@ const AddPost = () => {
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (postId) {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${postId}`);
+      if (indeId) {
+        const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/posts/${postId}`);
         const post = response.data;
         setTitle(post.title);
         setCategory(post.category);
@@ -29,7 +30,7 @@ const AddPost = () => {
     };
 
     fetchPost();
-  }, [postId]);
+  }, [indeId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

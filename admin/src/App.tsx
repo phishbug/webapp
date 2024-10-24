@@ -5,7 +5,8 @@ import Dashboard from './components/Dashboard';
 import Posts from './components/Posts';
 import AddPost from './pages/AddPost';
 import Login from './components/Login';
-import IndexUpdate from './pages/IndexUpdate'; // Import the new component
+import Indices from './components/Indices'; // Import the new component
+import Index from './pages/IndexUpdate'; // Import the new component
 import { Box } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -40,8 +41,18 @@ const MainLayout: React.FC = () => {
               </ProtectedRoute>
             } 
           />
-          <Route path="/index" element={<IndexUpdate />} /> {/* Add the route */}
+          <Route 
+            path="/posts/:id" 
+            element={
+              <ProtectedRoute>
+                <Posts />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/index" element={<Indices />} /> {/* Add the route */}
           <Route path="/add-post" element={<ProtectedRoute><AddPost /></ProtectedRoute>} />
+          <Route path="/add-indices" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/add-indices/:id" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/add-post/:id" element={<ProtectedRoute><AddPost /></ProtectedRoute>} />
         </Routes>
       </Box>

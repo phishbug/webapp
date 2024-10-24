@@ -1,12 +1,29 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import axiosInstance from '../axiosInstance';
 import { TextField, Button, Alert, Box } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const IndexUpdate = () => {
-  const [jsonData, setJsonData] = useState('');
-  const [name, setName] = useState('');
+  const { id: id } = useParams(); // Get postId from URL params
+  const [settingData, setSettingData] = useState('');
+  const [mappingData, setMappingData] = useState('');
+  const [name, setName] = useState(id);
+  const [indices, setIndices] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+   useEffect(() => {
+    const fetchIndex = async () => {
+      if (id) {
+        const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/index/` + id);
+        const index = response.data;
+        setMappingData(response.data[0])
+        setSettingData(response.data[1])
+      }
+    };
+
+    fetchIndex();
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +32,7 @@ const IndexUpdate = () => {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/index-update`, {
-        data: JSON.parse(jsonData), // Ensure valid JSON
+        data: JSON.parse(jsonData),
       });
       if (response.status === 200) {
         setSuccess('Index updated successfully!');
@@ -43,13 +60,25 @@ const IndexUpdate = () => {
         />
 
         <TextField
-          label="JSON Data"
+          label="Setting Data"
           multiline
           rows={10}
           fullWidth
           variant="outlined"
-          value={jsonData}
-          onChange={(e) => setJsonData(e.target.value)}
+          value={settingData}
+          onChange={(e) => setMappingData(e.target.value)}
+          required
+          sx={{ my: 2 }}
+        />
+
+        <TextField
+          label="Mapping Data"
+          multiline
+          rows={10}
+          fullWidth
+          variant="outlined"
+          value={mappingData}
+          onChange={(e) => setSettingData(e.target.value)}
           required
           sx={{ my: 2 }}
         />

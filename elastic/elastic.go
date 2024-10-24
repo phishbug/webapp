@@ -5,10 +5,10 @@ import (
     "webapp/constants"
     "webapp/opensearch"
     "webapp/types"
-    "encoding/json"
     "net/http"
     "html/template"
     "strings"
+    
     "github.com/gorilla/mux"
 )
 
@@ -65,17 +65,6 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
     ))
 
     tmpl.ExecuteTemplate(w, "layout.gohtml", helpers.MergeWithCommons("page", documents, false))
-}
-
-///////////////////////////////////////////////////////Admin Section/////////////////////////////////////////////
-
-func GetIndexes(w http.ResponseWriter, r *http.Request){
-    indices := opensearch.GetIndexed();
-
-    // Set response header to application/json
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(indices)
 }
 
 // func ElasticSearchPing(w http.ResponseWriter, r *http.Request, opensearchURL string, index string){

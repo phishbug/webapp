@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../axiosInstance';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Pagination, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Posts = () => {
+  const { id: id } = useParams(); // Get postId from URL params
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(5);
@@ -12,15 +13,17 @@ const Posts = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const fetchPosts = async () => {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/posts`);
-    setPosts(response.data);
-    setTotalPosts(response.data.length);
-  };
+ useEffect(() => {
+    const fetchPosts = async () => {
+      if (id) {
+        const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/docs/` + id);
+        const index = response.data;
+        setPosts(response.data)
+      }
+    };
 
-  useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [id]);
 
   const handleDelete = async (id) => {
     await axios.delete(`${import.meta.env.VITE_API_URL}/posts/${id}`);

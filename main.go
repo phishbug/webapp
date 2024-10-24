@@ -3,8 +3,10 @@ package main
 import (
     "net/http"
     "webapp/elastic"
+    "webapp/opensearch"
     "webapp/helpers"
     "webapp/user"
+    "fmt"
     "webapp/auth"
 
     "github.com/gorilla/mux"
@@ -16,7 +18,7 @@ func enableCORS(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins, modify as needed
         w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
         
         // Handle preflight requests
         if r.Method == http.MethodOptions {
@@ -27,9 +29,25 @@ func enableCORS(next http.Handler) http.Handler {
     })
 }
 
+// Middleware to print the request URI
+func printRequestURI(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        fmt.Printf("Requested Method: %s, Requested URI: %s\n", r.Method, r.RequestURI) // Print method and URI
+        next.ServeHTTP(w, r) // Call the next handler
+    })
+}
+
+// Custom handler for method not allowed
+func methodNotAllowedHandler(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+}
+
 func main() {
     //Initiate Router
     r := mux.NewRouter()
+
+    // Use the middleware
+    r.Use(printRequestURI)
 
     //Home 
     r.HandleFunc("/", elastic.Home).Methods("GET")
@@ -46,11 +64,22 @@ func main() {
     //Pages
     r.HandleFunc("/{post}",   elastic.GetPost).Methods("GET")
 
-////////////////////////////////////////////////////////////////////////////////////////////Admin Routes///////////////////////////////////////
+
+
+/////////////////////////////////////////////Admin Routes///////////////////////////////////////
     //AdminPages
     r.HandleFunc("/api-phish-bug/login",  auth.LoginHandler).Methods("POST")
 
-    r.HandleFunc("/api-phish-bug/indexes",  elastic.GetIndexes).Methods("GET")
+    // Define protected route with the AuthMiddleware
+    r.Handle("/api-phish-bug/indicess", auth.AuthMiddleware(http.HandlerFunc(opensearch.GetIndexes))).Methods("GET")
+
+    // Define protected route with the AuthMiddleware
+    r.Handle("/api-phish-bug/index/{name}", auth.AuthMiddleware(http.HandlerFunc(opensearch.GetIndex))).Methods("GET")
+
+    // Define protected route with the AuthMiddleware
+    r.Handle("/api-phish-bug/docs/{index}", auth.AuthMiddleware(http.HandlerFunc(opensearch.GetDocs))).Methods("GET")
+
+/////////////////////////////////////////////Admin Routes End///////////////////////////////////////
 
 
     // // Serve the robots.txt file
@@ -105,6 +134,9 @@ func main() {
     // //Can be any
     // http.HandleFunc("/admin-phish-bug-login-jwt", auth.LoginHandler)
 
+     // Custom handler for 405 errors
+    r.MethodNotAllowedHandler = http.HandlerFunc(methodNotAllowedHandler)
+    
     // Catch-all for 404 responses
     r.NotFoundHandler = http.HandlerFunc(helpers.NotFoundHandler)
     r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.HandlerFunc(staticFileHandler)))

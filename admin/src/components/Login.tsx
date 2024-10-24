@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Alert } from '@mui/material';
 
@@ -13,7 +13,7 @@ const Login = () => {
     e.preventDefault();
     setError(null); // Reset the error state before the request
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { username, password });
+      const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/login`, { username, password });
       localStorage.setItem('token', response.data.data.token); // Store the token
       navigate('/'); // Redirect to dashboard
     } catch (error) {

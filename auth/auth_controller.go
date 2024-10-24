@@ -6,6 +6,7 @@ import (
     "net/http"
     "webapp/types"
     "webapp/helpers"
+    "webapp/constants"
     "time"
 
     "github.com/dgrijalva/jwt-go"
@@ -75,8 +76,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid request payload", http.StatusBadRequest)
         return
     }
-    
-    if data.Username != "kunalthool23031986@phishbug.com"  && data.Password != "kunalthool23031986@phishbug.com"{
+
+    if data.Username != constants.GetENVKey("ADMIN_USERNAME")  && data.Password != constants.GetENVKey("ADMIN_USERNAME") {
         // Write the JSON response
         helpers.SendErrorResponse(w, http.StatusInternalServerError,  "Invalid Auth User")
         return

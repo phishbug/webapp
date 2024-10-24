@@ -15,3 +15,21 @@ body {
   padding: 20px;
   flex: 1;
 }
+.green{
+  color: #FFF;
+  background-color: #000;
+  padding: 10px;
+  border-radius: 5px;
+}
+.orange{
+  color: orange;
+}
+.yellow{
+  color: yellow;
+  background-color: #000;
+  padding: 10px;
+  border-radius: 5px;
+}
+.red{
+  color: red;
+}

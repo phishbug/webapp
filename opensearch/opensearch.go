@@ -9,86 +9,35 @@ import (
     "webapp/constants"
     "webapp/types"
 
-    "github.com/opensearch-project/opensearch-go"
     "github.com/opensearch-project/opensearch-go/opensearchapi"
+
 )
 
-//Open search Client
-func getOpenSearchClient() (*opensearch.Client, error) {
-    // Define custom client options
-    cfg := opensearch.Config{
-        Addresses: constants.GetOpenSearchAddress(),
-        Username: constants.GetENVKey("OPEN_SOURCE_USERNAME"), // Optional: for basic authentication
-        Password: constants.GetENVKey("OPEN_SOURCE_PASSWORD"),  // Optional: for basic authentication
-    }
 
-    client, err := opensearch.NewClient(cfg)
-
-    if err != nil {
-        log.Fatalf("Error creating OpenSearch client: %s", err)
-    }
-
-    return client, err
-}
-
-func GetIndexed()  []map[string]interface{}{
-    client, err := getOpenSearchClient()
-
-    if err != nil {
-        log.Fatalf("Error creating the client: %s", err)
-    }
-
-    // Prepare the request to get all indices
-    req := opensearchapi.CatIndicesRequest{
-        Format: "json",
-    }
-
-    // Execute the request
-    res, err := req.Do(context.Background(), client)
-
-    if err != nil {
-        log.Fatalf("Error getting indices: %s", err)
-    }
-    defer res.Body.Close()
-
-    // Check for a successful response
-    if res.IsError() {
-        log.Fatalf("Error: %s", res.String())
-    }
-
-    // Parse the response body
-    var indices []map[string]interface{}
-    if err := json.NewDecoder(res.Body).Decode(&indices); err != nil {
-        // http.Error(w, "Error parsing the response body: "+err.Error(), http.StatusInternalServerError)
-        panic(err)
-    }
-
-   return indices
-}
+var indexName = []string{constants.GetENVKey("OPEN_SEARCH_INDEX")};
 
 //Get Query For OPen Search
 func GetHomeSearchQuery() []types.Document{
-    
     //Get Search Request Here
-    searchResp := getSearchRequest(getSearchQueryForMainPage, "")
+    searchResp := getSearchRequest(getSearchQueryForMainPage, "", indexName)
 
     return getOpenSourceDoc(searchResp)
 }
 
 func GetPostQuery(slug string) []types.Document{
     //Get Search Request Here
-    searchResp := getSearchRequest(getSearchQueryForPostPage, slug)
+    searchResp := getSearchRequest(getSearchQueryForPostPage, slug, indexName)
 
     return getOpenSourceDoc(searchResp)
 }
 
-func getSearchRequest(op types.Operation, slug string) *opensearchapi.Response{
+func getSearchRequest(op types.Operation, slug string, index []string) *opensearchapi.Response{
 
     client, err := getOpenSearchClient()
-
+    fmt.Print(index)
     // Example: Search for documents
     searchReq := opensearchapi.SearchRequest{
-        Index:  []string{constants.GetENVKey("OPEN_SEARCH_INDEX")},
+        Index:  index,
         Body:  op(slug),
     }
 
@@ -101,7 +50,7 @@ func getSearchRequest(op types.Operation, slug string) *opensearchapi.Response{
     // Check the response
     if searchRes.IsError() {
         log.Fatalf("Error in response: %s", searchRes)
-        panic(searchRes.IsError)
+        // panic(searchRes.IsError)
     }
 
     return searchRes
@@ -122,7 +71,6 @@ func getSearchQueryForMainPage(slug string) *strings.Reader{
                        }
                      }
                  ],
-                 "_source": ["title", "content", "createdat", "slug"]
              }`,
         )
 }
